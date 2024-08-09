@@ -118,6 +118,21 @@ struct BloodPressure {
 }
 ```
 
+## Heart Rate
+
+ID: 22
+
+```c
+struct  {
+    uint8_t commandId = 22;
+    Action action;
+    uint8_t isEnabled;
+    uint8_t heartInterval;
+    char unused[11];
+    uint8_t crc;
+}
+```
+
 ## Units
 
 ID: 25
@@ -209,34 +224,6 @@ struct HRVSetting {
     Action action;
     uint8_t isEnabled;
     char unused[12];
-    uint8_t crc;
-}
-```
-
-## Heart Rate
-
-ID: 22
-
-```c
-struct  {
-    uint8_t commandId = 22;
-    Action action;
-    uint8_t isEnabled;
-    uint8_t heartInterval;
-    char unused[11];
-    uint8_t crc;
-}
-```
-
-
-## 
-
-ID: 
-
-```c
-struct  {
-    uint8_t commandId = ;
-    
     uint8_t crc;
 }
 ```

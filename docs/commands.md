@@ -6,9 +6,9 @@ Write Characteristic (Requests): 6e400002-b5a3-f393-e0a9-e50e24dcca9e
 Notify Characteristic (Responses): 6e400003-b5a3-f393-e0a9-e50e24dcca9e
 ```
 
-Commands seem to be the first Characteristic added to the API - the newer version is in Historical Data. Some Commands send split arrays, and will contain a different structure depending on the array index. These will be noted below.
+This set of commands was likely the first Characteristic added - some commands here have newer versions in [Big Data](bigdata.md). Some Commands send split arrays, and will contain a different structure depending on the array index ([example](commands.md#heart-rate)).
 
-Each packet will have the following 16-byte structure:
+Each command listed has the following 16-byte structure:
 
 ```c
 struct Command {
@@ -55,7 +55,9 @@ struct SetTimeResponse {
     uint8_t supportFlags4;
     uint8_t crc;
 }
+```
 
+```c
 enum supportFlags1 : uint8_t {
     SUPPORT_CUSTOM_WALLPAPER    = 1 << 0,
     SUPPORT_BLOOD_OXYGEN        = 1 << 1,
@@ -122,7 +124,9 @@ struct CameraResponse {
     char unused[13];
     uint8_t crc;
 }
+```
 
+```c
 enum ActionResponse : uint8_t {
     ACTION_INTO_CAMERA_UI = 1;
     ACTION_TAKE_PHOTO = 2;
@@ -157,7 +161,7 @@ struct BatteryResponse {
 ID: 4
 
 ```c
-struct WritePhoneInfo {
+struct WritePhoneInfoRequest {
     uint8_t commandId = 7;
     uint8_t clientVersionMajor; // Current QRing version = 2
     uint8_t clientVersionMinor; // Current QRing version = 10
@@ -165,8 +169,6 @@ struct WritePhoneInfo {
     uint8_t crc;
 }
 ```
-
-
 
 ## Sport Request
 
@@ -199,8 +201,6 @@ struct RebootRequest {
 
 ## Blood Pressure
 
-TODO: Request sample
-
 ID: 13
 
 ```c
@@ -219,7 +219,7 @@ Not sure what this is used for.
 ID: 14
 
 ```c
-struct BloodPressureConform {
+struct BloodPressureConformRequest {
     uint8_t commandId = 14;
     uint8_t success; // 0 = false, 255 = true
     uint8_t unused[13];
@@ -239,16 +239,14 @@ struct BlinkTwiceRequest {
 }
 ```
 
-## Push Notification
-
-Not sure what this is used for.
+## Phone Call
 
 ID: 17
 
 ```c
-struct PushNotification {
+struct PhoneCallResponse {
     uint8_t commandId = 17;
-    uint8_t action;
+    uint8_t rejectCall; // boolean
     char unused[13];
     uint8_t crc;
 }
@@ -271,7 +269,7 @@ struct SportsRequest {
 
 ## Blood Pressure
 
-TODO: How to request?
+Request with [Data Request](commands.md#data-request)
 
 ID: 20
 
@@ -287,6 +285,8 @@ struct BloodPressureResponse {
 ```
 
 ## Heart Rate
+
+Request with [Data Request](commands.md#data-request)
 
 Split array
 
@@ -311,7 +311,7 @@ struct HeartRateResponse {
 If `index` is 0:
 
 ```c
-struct HeartRateData {
+struct HeartRateResponse {
     uint8_t commandId = 21;
     uint8_t index;
     uint8_t size;
@@ -324,7 +324,7 @@ struct HeartRateData {
 If `index` is 1:
 
 ```c
-struct HeartRateData {
+struct HeartRateResponse {
     uint8_t commandId = 21;
     uint8_t index;
     uint32_t utcTime;
@@ -336,7 +336,7 @@ struct HeartRateData {
 If `index` is > 1:
 
 ```c
-struct HeartRateData {
+struct HeartRateResponse {
     uint8_t commandId = 21;
     uint8_t index;
     uint8_t heartRateData[13];
@@ -434,7 +434,9 @@ struct MusicCommandResponse {
     char unused[13];
     uint8_t crc;
 }
+```
 
+```c
 enum MediaAction {
     Pause = 1,
     Previous = 2,
@@ -445,6 +447,8 @@ enum MediaAction {
 ```
 
 ## Realtime Heart Rate
+
+Request with [Data Request](commands.md#data-request)
 
 ID: 30
 
@@ -548,13 +552,23 @@ struct SetDrinkAlarmRequest {
     char unused[3];
     uint8_t crc;
 }
+```
 
-## Alarms
+## Alarm
 
 ID: 40
 
 ```c
-struct Alarm {
+struct AlarmRequest {
+    uint8_t commandId = 40;
+    uint8_t index;
+    char unused[13];
+    uint8_t crc;
+}
+```
+
+```c
+struct AlarmResponse {
     uint8_t commandId = 40;
     uint8_t index;
     uint8_t enabled;
@@ -573,7 +587,7 @@ TODO: Response?
 ID: 45
 
 ```c
-struct BlackList {
+struct BlackListRequest {
     uint8_t commandId = 45;
     uint8_t data = 1;
     char unused[13];
@@ -767,6 +781,8 @@ struct SportsDataResponse {
 
 ## Sleep Data
 
+Newer request in [Big Data](bigdata.md#sleep)
+
 ID: 68
 
 ```c
@@ -829,6 +845,8 @@ struct FindDeviceRequest {
 ```
 
 ## ANCS Request
+
+TODO: What does ANCS stand for?
 
 ID: 96
 
@@ -961,10 +979,10 @@ struct AppActivityResponse {
 ID: 115
 
 ```c
-struct  {
+struct DeviceNotifyResponse {
     uint8_t commandId = 115;
     NotifyType dataType;
-
+    // TODO: Seems to be variable data
 }
 
 enum NotifyType : uint8_t {

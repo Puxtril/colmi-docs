@@ -6,7 +6,7 @@ Write Characteristic (Requests): de5bf72a-d711-4e47-af26-65e3012a5dc7
 Notify Characteristic (Responses): de5bf729-d711-4e47-af26-65e3012a5dc7
 ```
 
-This is a newer protocol that can transfer more data compared to Commands.
+This is a newer protocol compared to Commands.
 
 These will contain the following structure:
 
@@ -31,7 +31,7 @@ struct BigDataRequest {
 }
 ```
 
-TODO: There's many more Big Data types
+TODO: There's more Big Data types
 
 ## Sleep
 
@@ -71,7 +71,7 @@ enum SleepType : uint8_t {
 }
 ```
 
-## Blood Oxygen (Sp02)
+## Blood Oxygen
 
 ID: 42
 
