@@ -2,6 +2,8 @@
 
 This is Reverse Engineered (copied) from [QRing](https://play.google.com/store/apps/details?id=com.app.cq.ring). I can only test on my Colmi R03, but this API has specificiations likely meant for all Colmi smart devices.
 
+For any changes, feel free to submit a PR at the [Github repository for this website](https://github.com/Puxtril/colmi-docs).
+
 All requests in this documentation are named accordingly: In Bluetooth terms, *Requests* are sent by the Master and *Responses* are sent by the Slave.
 
 ## Getting Started
