@@ -25,8 +25,9 @@ enum Action : uint8_t {
     DELETE = 3
 }
 ```
-
-To calculate the CRC, add up the `commandId` and each individual byte in `data` to a large enough integer (16-bit or 32-bit), then `&` with `0xFF`.
+Notes:
+- To calculate the CRC, add up the `commandId` and each individual byte in `data` to a large enough integer (16-bit or 32-bit), then `&` with `0xFF`.
+- The commandId is actually only 7 bits - the most signifigant bit is an error flag. `(commandId & 128) >> 7` will get you the error status.
 
 ## Palm Screen
 
