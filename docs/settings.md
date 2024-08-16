@@ -187,6 +187,30 @@ struct HealthTargetsResponse {
 }
 ```
 
+## Menstruation
+
+TODO: Needs testing, many of these variable names are guesses.
+
+ID: 43
+
+```c
+struct Menstruation {
+    uint8_t commandId = 43;
+    Action action;
+    uint8_t switch; // ?
+    uint8_t during; // ?
+    uint8_t cycle;
+    uint8_t daysUntilNext;
+    uint8_t isAlarmEnabled;
+    uint8_t alarm1;
+    uint8_t alarm2;
+    uint8_t alarmHour;
+    uint8_t alarmMin;
+    char unused[4];
+    uint8_t crc;
+}
+```
+
 ## Blood Oxygen
 
 ID: 44
