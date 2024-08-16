@@ -124,7 +124,7 @@ struct BloodPressure {
 ID: 22
 
 ```c
-struct  {
+struct HeartRate {
     uint8_t commandId = 22;
     Action action;
     uint8_t isEnabled;
@@ -154,7 +154,7 @@ struct Units {
 ID: 31
 
 ```c
-struct  {
+struct DisplayTime {
     uint8_t commandId = 31;
     Action action;
     uint8_t unk;
