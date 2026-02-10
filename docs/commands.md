@@ -998,3 +998,119 @@ enum NotifyType : uint8_t {
     //TODO there's more here
 } 
 ```
+
+## Raw Sensors
+
+ID: 161
+
+From [edgeimpulse/example-data-collection-colmi-r02][]. Reports SpO2, PPG, and
+accelerometer raw sensor data.
+
+```c
+struct RawSensorRequest {
+    uint8_t commandId = 161;
+    RawSensorRequest action;
+    char unused[13];
+    uint8_t crc;
+}
+
+enum RawSensorRequest : uint8_t {
+    RAW_SENSOR_DISABLE = 2;
+    RAW_SENSOR_ENABLE = 4;
+}
+```
+
+The variable data structure will depend on whether it's SpO2, PPG, or
+accelerometer data.
+
+```c
+struct RawSensorResponse {
+    uint8_t commandId = 161;
+    RawSensorDataType type;
+    char variableData[13];
+    uint8_t crc;
+}
+
+enum RawSensorDataType : uint8_t {
+    RAW_SENSOR_SPO2_DATA = 1;
+    RAW_SENSOR_PPG_DATA = 2;
+    RAW_SENSOR_ACC_DATA = 3;
+}
+```
+
+The SpO2 value is a big-endian 16-bit integer.
+
+```c
+struct RawSensorSPO2Data {
+    uint8_t commandId = 161;
+    RawSensorDataType type = RAW_SENSOR_SPO2_DATA;
+    uint8_t spO2_1;
+    uint8_t spO2_2;
+    uint8_t : 8; // unused
+    uint8_t spO2Max;
+    uint8_t : 8; // unused
+    uint8_t spO2Min;
+    uint8_t : 8; // unused
+    uint8_t spO2Diff;
+    char unused[5];
+    uint8_t crc;
+}
+
+// Sample C code:
+uint16_t spO2 = ((uint16_t)data[2] << 8) | data[3];
+```
+
+The PPG value is likewise a big-endian 16-bit integer.
+
+```c
+struct RawSensorPPGData {
+    uint8_t commandId = 161;
+    RawSensorDataType type = RAW_SENSOR_PPG_DATA;
+    uint8_t ppg_1;
+    uint8_t ppg_2;
+    uint8_t ppgMax_1;
+    uint8_t ppgMax_2;
+    uint8_t ppgMin_1;
+    uint8_t ppgMin_2;
+    uint8_t ppgDiff_1;
+    uint8_t ppgDiff_2;
+    char unused[5];
+    uint8_t crc;
+}
+
+// Sample C code:
+uint16_t ppg = ((uint16_t)data[2] << 8) | data[3];
+uint16_t ppgMax = ((uint16_t)data[4] << 8) | data[5];
+uint16_t ppgMin = ((uint16_t)data[6] << 8) | data[7];
+uint16_t ppgDiff = ((uint16_t)data[8] << 8) | data[9];
+```
+
+Accelerometer values are stored as 12-bit signed integers split across two
+bytes. The first byte (e.g. `accX_1`) contains the upper 8 bits of the 12-bit
+value. The second byte (e.g. `accX_2`) contains only the lower 4 bits of the
+value.
+
+```c
+struct RawSensorAccelerometerData {
+    uint8_t commandId = 161;
+    RawSensorDataType type = RAW_SENSOR_ACC_DATA;
+    uint8_t accY_1;
+    uint8_t accY_2;
+    uint8_t accZ_1;
+    uint8_t accZ_2;
+    uint8_t accX_1;
+    uint8_t accX_2;
+    char unused[7];
+    uint8_t crc;
+}
+
+// Sample C code reconstructing the accX value:
+uint16_t raw = ((uint16_t)data[6] << 4) | (data[7] & 0x0F);
+// If sign bit (bit 11) is set, convert from unsigned 12-bit to signed
+if (raw & 0x800) {
+    raw -= 0x1000;
+}
+int16_t accX = (int16_t)raw;
+```
+
+[edgeimpulse/example-data-collection-colmi-r02]: https://github.com/edgeimpulse/example-data-collection-colmi-r02/blob/289d786065b5d2e9dd85d6dab392ca37b7ce937a/ring.py#L171-L191
